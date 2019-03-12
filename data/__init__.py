@@ -1,5 +1,7 @@
 import importlib
+
 import torch.utils.data
+
 from data.base_data_loader import BaseDataLoader
 from data.base_dataset import BaseDataset
 
@@ -8,6 +10,7 @@ def find_dataset_using_name(dataset_name):
     # Given the option --dataset_mode [datasetname],
     # the file "data/datasetname_dataset.py"
     # will be imported.
+    # aligned_dataset  / single_dataset
     dataset_filename = "data." + dataset_name + "_dataset"
     datasetlib = importlib.import_module(dataset_filename)
 

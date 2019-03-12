@@ -9,6 +9,9 @@ class TestOptions(BaseOptions):
         parser.add_argument('--num_test', type=int, default=50, help='how many test images to run')
         parser.add_argument('--n_samples', type=int, default=5, help='#samples')
         parser.add_argument('--no_encode', action='store_true', help='do not produce encoded image')
+        parser.add_argument('--test_psnr', action='store_true', help='test the quality of encoded image by psnr')
+        parser.add_argument('--test_ssim', action='store_true', help='test the quality of encoded image by ssim')
+        parser.add_argument('--test_msssim', action='store_true', help='test the quality of encoded image by ms-ssim')
         parser.add_argument('--sync', action='store_true', help='use the same latent code for different input images')
         parser.add_argument('--aspect_ratio', type=float, default=1.0, help='aspect ratio for the results')
         self.isTrain = False

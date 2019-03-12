@@ -1,9 +1,11 @@
 import argparse
 import os
-from util import util
+
 import torch
-import models
+
 import data
+import models
+from util import util
 
 
 class BaseOptions():
@@ -24,7 +26,7 @@ class BaseOptions():
         parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2, -1 for CPU mode')
         parser.add_argument('--name', type=str, default='', help='name of the experiment. It decides where to store samples and models')
         parser.add_argument('--resize_or_crop', type=str, default='resize_and_crop', help='not implemented')
-        parser.add_argument('--dataset_mode', type=str, default='aligned', help='aligned,single')
+        parser.add_argument('--dataset_mode', type=str, default='aligned', help='aligned,single,labeled')
         parser.add_argument('--model', type=str, default='bicycle_gan', help='chooses which model to use. bicycle,, ...')
         parser.add_argument('--direction', type=str, default='AtoB', help='AtoB or BtoA')
         parser.add_argument('--epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model')
@@ -38,7 +40,7 @@ class BaseOptions():
         # models
         parser.add_argument('--num_Ds', type=int, default=2, help='number of Discrminators')
         parser.add_argument('--gan_mode', type=str, default='lsgan', help='dcgan|lsgan')
-        parser.add_argument('--netD', type=str, default='basic_256_multi', help='selects model to use for netD')
+        parser.add_argument('--netD', type=str, default='basic_256_multi_class', help='selects model to use for netD')
         parser.add_argument('--netD2', type=str, default='basic_256_multi', help='selects model to use for netD')
         parser.add_argument('--netG', type=str, default='unet_256', help='selects model to use for netG')
         parser.add_argument('--netE', type=str, default='resnet_256', help='selects model to use for netE')

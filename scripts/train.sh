@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -ex
 CLASS='edges2shoes'  # facades, day2night, edges2shoes, edges2handbags, maps
 MODEL='bicycle_gan'

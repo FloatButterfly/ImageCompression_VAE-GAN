@@ -1,8 +1,10 @@
+import functools
+
 import torch
 import torch.nn as nn
 from torch.nn import init
-import functools
 from torch.optim import lr_scheduler
+
 
 ###############################################################################
 # Functions
@@ -35,7 +37,7 @@ def init_weights(net, init_type='normal', gain=0.02):
 
 def init_net(net, init_type='normal', gpu_ids=[]):
     if len(gpu_ids) > 0:
-        assert(torch.cuda.is_available())
+        assert (torch.cuda.is_available())
         net.to(gpu_ids[0])
         net = torch.nn.DataParallel(net, gpu_ids)
     init_weights(net, init_type)
@@ -47,6 +49,7 @@ def get_scheduler(optimizer, opt):
         def lambda_rule(epoch):
             lr_l = 1.0 - max(0, epoch - opt.niter) / float(opt.niter_decay + 1)
             return lr_l
+
         scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda=lambda_rule)
     elif opt.lr_policy == 'step':
         scheduler = lr_scheduler.StepLR(
@@ -134,6 +137,9 @@ def define_D(input_nc, ndf, netD,
     elif netD == 'basic_256_multi':
         net = D_NLayersMulti(input_nc=input_nc, ndf=ndf, n_layers=3, norm_layer=norm_layer,
                              use_sigmoid=use_sigmoid, num_D=num_Ds)
+    elif netD == 'basic_256_multi_class':
+        net = D_NLayersMulti_Class(input_nc=input_nc, ndf=ndf, n_layers=3, c_dim=1, norm_layer=norm_layer,
+                                   use_sigmoid=use_sigmoid, num_D=num_Ds)
     else:
         raise NotImplementedError('Discriminator model name [%s] is not recognized' % net)
     return init_net(net, init_type, gpu_ids)
@@ -205,9 +211,9 @@ class D_NLayersMulti(nn.Module):
                 input_nc, ndf, n_layers, norm_layer, use_sigmoid)
             self.model.append(nn.Sequential(*layers))
             self.down = nn.AvgPool2d(3, stride=2, padding=[
-                                     1, 1], count_include_pad=False)
+                1, 1], count_include_pad=False)
             for i in range(num_D - 1):
-                ndf_i = int(round(ndf / (2**(i + 1))))
+                ndf_i = int(round(ndf / (2 ** (i + 1))))
                 layers = self.get_layers(
                     input_nc, ndf_i, n_layers, norm_layer, use_sigmoid)
                 self.model.append(nn.Sequential(*layers))
@@ -223,7 +229,7 @@ class D_NLayersMulti(nn.Module):
         nf_mult_prev = 1
         for n in range(1, n_layers):
             nf_mult_prev = nf_mult
-            nf_mult = min(2**n, 8)
+            nf_mult = min(2 ** n, 8)
             sequence += [
                 nn.Conv2d(ndf * nf_mult_prev, ndf * nf_mult,
                           kernel_size=kw, stride=2, padding=padw),
@@ -232,7 +238,7 @@ class D_NLayersMulti(nn.Module):
             ]
 
         nf_mult_prev = nf_mult
-        nf_mult = min(2**n_layers, 8)
+        nf_mult = min(2 ** n_layers, 8)
         sequence += [
             nn.Conv2d(ndf * nf_mult_prev, ndf * nf_mult,
                       kernel_size=kw, stride=1, padding=padw),
@@ -247,6 +253,7 @@ class D_NLayersMulti(nn.Module):
             sequence += [nn.Sigmoid()]
         return sequence
 
+    # model[0] output 30*30*1 model[1] output 6*6*1
     def forward(self, input):
         if self.num_D == 1:
             return self.model(input)
@@ -255,8 +262,101 @@ class D_NLayersMulti(nn.Module):
         for i in range(self.num_D):
             result.append(self.model[i](down))
             if i != self.num_D - 1:
-                down = self.down(down)
+                down = self.down(down)  # 256*256*3 -> 128*128*3
         return result
+
+
+class D_NLayersMulti_Class(nn.Module):
+    """ Define the discriminator with class label """
+
+    def __init__(self, input_nc, ndf=64, n_layers=3, c_dim=1,
+                 norm_layer=nn.BatchNorm2d, use_sigmoid=False, image_size=256, num_D=1):
+        super(D_NLayersMulti_Class, self).__init__()
+        # st()
+        print("Disciminator init!")
+        self.num_D = num_D
+        if num_D == 1:
+            layers, layer_pic, layer_cls = self.get_layers(
+                image_size, input_nc, ndf, n_layers, c_dim, norm_layer, use_sigmoid)
+            self.model = nn.Sequential(*layers)
+            self.conv1 = layer_pic
+            self.conv2 = layer_cls
+        else:
+            self.model = ListModule(self, 'model')  # model has been defined for append here-p
+            self.conv1 = ListModule(self, 'conv1')
+            # self.conv2 = ListModule(self, 'conv2')
+            layers, layer_pic, layer_cls = self.get_layers(
+                image_size, input_nc, ndf, n_layers, c_dim, norm_layer, use_sigmoid)
+            self.model.append(nn.Sequential(*layers))  # front convolution
+            self.conv1.append(nn.Sequential(*layer_pic))  # formal result
+            # self.conv2.append(nn.Sequential(*layer_cls))
+            self.conv2 = nn.Sequential(*layer_cls)  # model+conv2=classlabel
+            self.down = nn.AvgPool2d(3, stride=2, padding=[
+                1, 1], count_include_pad=False)
+            for i in range(num_D - 1):
+                ndf_i = int(round(ndf / (2 ** (i + 1))))
+                image_size_i = 128
+                layers, layer_pic, layer_cls = self.get_layers(
+                    image_size_i, input_nc, ndf_i, n_layers, c_dim, norm_layer, use_sigmoid)
+                self.model.append(nn.Sequential(*layers))
+                self.conv1.append(nn.Sequential(*layer_pic))
+                # self.conv2.append(nn.Sequential(*layer_cls))
+
+    def get_layers(self, image_size=256, input_nc=3, ndf=64, n_layers=3, c_dim=1,
+                   norm_layer=nn.BatchNorm2d, use_sigmoid=False):
+        kw = 4
+        padw = 1
+        sequence = [nn.Conv2d(input_nc, ndf, kernel_size=kw,
+                              stride=2, padding=padw), nn.LeakyReLU(0.2, True)]
+        nf_mult = 1
+        nf_mult_prev = 1
+        for n in range(1, n_layers):
+            nf_mult_prev = nf_mult
+            nf_mult = min(2 ** n, 8)
+            sequence += [
+                nn.Conv2d(ndf * nf_mult_prev, ndf * nf_mult,
+                          kernel_size=kw, stride=2, padding=padw),
+                norm_layer(ndf * nf_mult),
+                nn.LeakyReLU(0.2, True)
+            ]
+
+        ksize = int(image_size / 2 ** n_layers)
+        layer_cls = [nn.Conv2d(ndf * nf_mult, c_dim, kernel_size=ksize, bias=False)]
+
+        nf_mult_prev = nf_mult
+        nf_mult = min(2 ** n_layers, 8)
+
+        layer_pic = sequence.copy()
+        layer_pic += [
+            nn.Conv2d(ndf * nf_mult_prev, ndf * nf_mult,
+                      kernel_size=kw, stride=1, padding=padw),
+            norm_layer(ndf * nf_mult),
+            nn.LeakyReLU(0.2, True)
+        ]
+
+        layer_pic += [nn.Conv2d(ndf * nf_mult, 1,
+                                kernel_size=kw, stride=1, padding=padw)]
+        # layer_cls = [nn.Conv2d(ndf * nf_mult, c_dim, kernel_size=ksize, bias=False)]
+        # if use_sigmoid:
+        #     sequence += [nn.Sigmoid()]
+        return sequence, layer_pic, layer_cls
+
+    # model[0] output 30*30*1 model[1] output 6*6*1
+    def forward(self, input):
+        if self.num_D == 1:
+            return self.model(input)
+        result = []
+        out_cls = []
+        down = input
+        for i in range(self.num_D):
+            h = self.model[i](down)
+            # print(h.shape)
+            if i == 0:
+                out_cls = self.conv2(h)
+            result.append(self.conv1[i](down))
+            if i != self.num_D - 1:
+                down = self.down(down)  # 256*256*3 -> 128*128*3
+        return result, out_cls.view(out_cls.size(0), out_cls.size(1))
 
 
 # Defines the conv discriminator with the specified arguments.
@@ -311,7 +411,7 @@ class D_NLayers(nn.Module):
         nf_mult_prev = 1
         for n in range(1, n_layers):
             nf_mult_prev = nf_mult
-            nf_mult = min(2**n, 8)
+            nf_mult = min(2 ** n, 8)
             sequence += [nn.Conv2d(ndf * nf_mult_prev, ndf * nf_mult,
                                    kernel_size=kw, stride=2, padding=padw, bias=use_bias)]
             if norm_layer is not None:
@@ -319,7 +419,7 @@ class D_NLayers(nn.Module):
             sequence += [nl_layer()]
 
         nf_mult_prev = nf_mult
-        nf_mult = min(2**n_layers, 8)
+        nf_mult = min(2 ** n_layers, 8)
         sequence += [
             nn.Conv2d(ndf * nf_mult_prev, ndf * nf_mult,
                       kernel_size=kw, stride=1, padding=padw, bias=use_bias)]
@@ -621,10 +721,12 @@ class G_Unet_add_all(nn.Module):
         unet_block = UnetBlock_with_z(ngf * 8, ngf * 8, ngf * 8, nz, None, innermost=True,
                                       norm_layer=norm_layer, nl_layer=nl_layer, upsample=upsample)
         unet_block = UnetBlock_with_z(ngf * 8, ngf * 8, ngf * 8, nz, unet_block,
-                                      norm_layer=norm_layer, nl_layer=nl_layer, use_dropout=use_dropout, upsample=upsample)
-        for i in range(num_downs - 6):
+                                      norm_layer=norm_layer, nl_layer=nl_layer, use_dropout=use_dropout,
+                                      upsample=upsample)
+        for i in range(num_downs - 6):  # 8-6=2 0,1
             unet_block = UnetBlock_with_z(ngf * 8, ngf * 8, ngf * 8, nz, unet_block,
-                                          norm_layer=norm_layer, nl_layer=nl_layer, use_dropout=use_dropout, upsample=upsample)
+                                          norm_layer=norm_layer, nl_layer=nl_layer, use_dropout=use_dropout,
+                                          upsample=upsample)
         unet_block = UnetBlock_with_z(ngf * 4, ngf * 4, ngf * 8, nz, unet_block,
                                       norm_layer=norm_layer, nl_layer=nl_layer, upsample=upsample)
         unet_block = UnetBlock_with_z(ngf * 2, ngf * 2, ngf * 4, nz, unet_block,
@@ -730,7 +832,7 @@ class E_NLayers(nn.Module):
         nf_mult_prev = 1
         for n in range(1, n_layers):
             nf_mult_prev = nf_mult
-            nf_mult = min(2**n, 4)
+            nf_mult = min(2 ** n, 4)
             sequence += [
                 nn.Conv2d(ndf * nf_mult_prev, ndf * nf_mult,
                           kernel_size=kw, stride=2, padding=padw)]

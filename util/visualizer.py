@@ -1,10 +1,12 @@
-import numpy as np
-import os
 import ntpath
+import os
 import time
-from . import util
-from . import html
+
+import numpy as np
 from scipy.misc import imresize
+
+from . import html
+from . import util
 
 
 # save image to the disk
@@ -51,9 +53,13 @@ class Visualizer():
             print('create web directory %s...' % self.web_dir)
             util.mkdirs([self.web_dir, self.img_dir])
         self.log_name = os.path.join(opt.checkpoints_dir, opt.name, 'loss_log.txt')
+        self.log_tensor_name = os.path.join(opt.checkpoints_dir, opt.name, 'tensor_log.txt')
         with open(self.log_name, "a") as log_file:
             now = time.strftime("%c")
             log_file.write('================ Training Loss (%s) ================\n' % now)
+        with open(self.log_tensor_name, "a") as log_file:
+            now = time.strftime("%c")
+            log_file.write('================ Tensor encoded from color image (%s) ================\n' % now)
 
     def reset(self):
         self.saved = False
@@ -145,7 +151,14 @@ class Visualizer():
         message = '(epoch: %d, iters: %d, time: %.3f, data: %.3f) ' % (epoch, i, t, t_data)
         for k, v in losses.items():
             message += '%s: %.3f ' % (k, v)
-
         print(message)
         with open(self.log_name, "a") as log_file:
             log_file.write('%s\n' % message)
+
+    def print_Tensor_encoded(self, epoch, i, tensors):
+        message = '(epoch: %d, iters: %d)' % (epoch, i)
+        for k, v in tensors.items():
+            with open(self.log_tensor_name, "a") as log_file:
+                v_cpu = v.cpu()
+                log_file.write('%s: ' % message)
+                # np.savetxt(log_file,  v_cpu.detach().numpy())

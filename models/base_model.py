@@ -1,6 +1,8 @@
 import os
-import torch
 from collections import OrderedDict
+
+import torch
+
 from . import networks
 
 
@@ -20,6 +22,7 @@ class BaseModel():
         self.model_names = []
         self.visual_names = []
         self.image_paths = []
+        self.tensor_name = []
 
     def setup(self, opt):
         if self.isTrain:
@@ -80,6 +83,14 @@ class BaseModel():
                 errors_ret[name] = float(getattr(self, 'loss_' + name))
         return errors_ret
 
+    # return z_tensor
+    def get_tensor_encoded(self):
+        tensor_ret = OrderedDict()
+        for name in self.tensor_name:
+            if isinstance(name, str):
+                tensor_ret[name] = getattr(self, name)
+        return tensor_ret
+
     # make models eval mode during test time
     def eval(self):
         for name in self.model_names:
@@ -109,7 +120,7 @@ class BaseModel():
                 if getattr(module, key) is None:
                     state_dict.pop('.'.join(keys))
             if module.__class__.__name__.startswith('InstanceNorm') and \
-               (key == 'num_batches_tracked'):
+                    (key == 'num_batches_tracked'):
                 state_dict.pop('.'.join(keys))
         else:
             self.__patch_instance_norm_state_dict(state_dict, getattr(module, key), keys, i + 1)
@@ -121,8 +132,10 @@ class BaseModel():
                 load_filename = '%s_net_%s.pth' % (epoch, name)
                 load_path = os.path.join(self.save_dir, load_filename)
                 net = getattr(self, 'net' + name)
+                # print(net)
                 if isinstance(net, torch.nn.DataParallel):
                     net = net.module
+                    # print(net)
                 print('loading the model from %s' % load_path)
                 # if you are using PyTorch newer than 0.4 (e.g., built from
                 # GitHub source), you can remove str() on self.device
@@ -133,6 +146,7 @@ class BaseModel():
                 # patch InstanceNorm checkpoints prior to 0.4
                 for key in list(state_dict.keys()):  # need to copy keys here because we mutate in loop
                     self.__patch_instance_norm_state_dict(state_dict, net, key.split('.'))
+                # print(state_dict)
                 net.load_state_dict(state_dict)
 
     # print network information

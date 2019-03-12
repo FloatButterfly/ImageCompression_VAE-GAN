@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 set -ex
 # models
 RESULTS_DIR='./results/edges2handbags'
@@ -30,3 +31,6 @@ CUDA_VISIBLE_DEVICES=${GPU_ID} python ./test.py \
   --n_samples ${NUM_SAMPLES} \
   --center_crop \
   --no_flip
+
+python ./test.py --dataroot ./datasets/edges2shoes --results_dir ./results/edges2shoes/zvae-nz8/test_zcode1 --checkpoints_dir ./pretrained_models --name zvae-nz8 --direction AtoB \
+--loadSize 256 --fineSize 256 --input_nc 1 --num_test 200 --center_crop --no_flip --model zvae_gan

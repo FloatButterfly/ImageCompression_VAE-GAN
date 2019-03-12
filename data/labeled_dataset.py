@@ -9,7 +9,7 @@ from data.base_dataset import BaseDataset
 from data.image_folder import make_dataset
 
 
-class AlignedDataset(BaseDataset):
+class LabeledDataset(BaseDataset):
     @staticmethod
     def modify_commandline_options(parser, is_train):
         return parser
@@ -19,10 +19,17 @@ class AlignedDataset(BaseDataset):
         self.root = opt.dataroot
         self.dir_AB = os.path.join(opt.dataroot, opt.phase)
         self.AB_paths = sorted(make_dataset(self.dir_AB))
-        assert(opt.resize_or_crop == 'resize_and_crop')
+        assert (opt.resize_or_crop == 'resize_and_crop')
 
     def __getitem__(self, index):
         AB_path = self.AB_paths[index]
+        # create label
+        label = []
+        if AB_path.find('shoes') != (-1):
+            label.append([0])
+        elif AB_path.find('handbag') != (-1):
+            label.append([1])
+
         AB = Image.open(AB_path).convert('RGB')
         w, h = AB.size
         w2 = int(w / 2)
@@ -62,7 +69,7 @@ class AlignedDataset(BaseDataset):
             B = tmp.unsqueeze(0)
 
         return {'A': A, 'B': B,
-                'A_paths': AB_path, 'B_paths': AB_path}
+                'A_paths': AB_path, 'B_paths': AB_path, 'label': torch.FloatTensor(label)}
 
     def __len__(self):
         return len(self.AB_paths)

@@ -4,9 +4,9 @@ from . import networks
 from .base_model import BaseModel
 
 
-class BiCycleGANModel(BaseModel):
+class cVaeGANModel(BaseModel):
     def name(self):
-        return 'BiCycleGANModel'
+        return 'cVaeGANModel'
 
     @staticmethod
     def modify_commandline_options(parser, is_train=True):
@@ -17,17 +17,17 @@ class BiCycleGANModel(BaseModel):
             assert opt.batch_size % 2 == 0  # load two images at one time.
 
         BaseModel.initialize(self, opt)
+        self.tensor_name = ['z_encoded']
+        # self.log_tensor_name = os.path.join(opt.checkpoints_dir, opt.name, 'tensor_log.txt')
         # specify the training losses you want to print out. The program will call base_model.get_current_losses
-        self.loss_names = ['G_GAN', 'D', 'G_GAN2', 'D2', 'G_L1', 'z_L1', 'kl']
+        self.loss_names = ['G_GAN', 'D', 'G_L1', 'kl']
         # specify the images you want to save/display. The program will call base_model.get_current_visuals
-        # self.visual_names = ['real_A_encoded', 'real_B_encoded', 'fake_B_random', 'fake_B_encoded']
         self.visual_names = ['real_A_encoded', 'real_B_encoded', 'fake_B_encoded']
         # specify the models you want to save to the disk. The program will call base_model.save_networks and base_model.load_networks
         use_D = opt.isTrain and opt.lambda_GAN > 0.0
-        # use_D2 = False
-
-        use_D2 = opt.isTrain and opt.lambda_GAN2 > 0.0 and not opt.use_same_D
-
+        #
+        use_D2 = False
+        #
         use_E = opt.isTrain or not opt.no_encode
         use_vae = True
         self.model_names = ['G']
@@ -54,8 +54,9 @@ class BiCycleGANModel(BaseModel):
         if opt.isTrain:
             self.criterionGAN = networks.GANLoss(mse_loss=not use_sigmoid).to(self.device)
             self.criterionL1 = torch.nn.L1Loss()
-            ## see use
-            self.criterionZ = torch.nn.L1Loss()
+            #
+            # self.criterionZ = torch.nn.L1Loss()
+            #
             # initialize optimizers
             self.optimizers = []
             self.optimizer_G = torch.optim.Adam(self.netG.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
@@ -67,9 +68,9 @@ class BiCycleGANModel(BaseModel):
             if use_D:
                 self.optimizer_D = torch.optim.Adam(self.netD.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
                 self.optimizers.append(self.optimizer_D)
-            if use_D2:
-                self.optimizer_D2 = torch.optim.Adam(self.netD2.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
-                self.optimizers.append(self.optimizer_D2)
+            # if use_D2:
+            #     self.optimizer_D2 = torch.optim.Adam(self.netD2.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
+            #     self.optimizers.append(self.optimizer_D2)
 
     def is_train(self):
         return self.opt.isTrain and self.real_A.size(0) == self.opt.batch_size
@@ -80,7 +81,6 @@ class BiCycleGANModel(BaseModel):
         self.real_B = input['B' if AtoB else 'A'].to(self.device)
         self.image_paths = input['A_paths' if AtoB else 'B_paths']
 
-    ## no need for random z
     def get_z_random(self, batch_size, nz, random_type='gauss'):
         if random_type == 'uni':
             z = torch.rand(batch_size, nz) * 2.0 - 1.0
@@ -110,27 +110,29 @@ class BiCycleGANModel(BaseModel):
         # A1, B1 for encoded; A2, B2 for random
         self.real_A_encoded = self.real_A[0:half_size]
         self.real_B_encoded = self.real_B[0:half_size]
-        self.real_B_random = self.real_B[half_size:]
+        self.real_B_random = self.real_B[half_size:]  # 后半部分随意抽一张
         # get encoded z
         self.z_encoded, self.mu, self.logvar = self.encode(self.real_B_encoded)
-        # get random z
+        # print(self.z_encoded)
+        # get random z, 8维编码出来的向量
         self.z_random = self.get_z_random(self.real_A_encoded.size(0), self.opt.nz)
         # generate fake_B_encoded
         self.fake_B_encoded = self.netG(self.real_A_encoded, self.z_encoded)
-        # generate fake_B_random
+        # generate fake_B_random？？？？基本模型测试
         self.fake_B_random = self.netG(self.real_A_encoded, self.z_random)
+        # 是否用条件限制
         if self.opt.conditional_D:  # tedious conditoinal data
             self.fake_data_encoded = torch.cat([self.real_A_encoded, self.fake_B_encoded], 1)
             self.real_data_encoded = torch.cat([self.real_A_encoded, self.real_B_encoded], 1)
             self.fake_data_random = torch.cat([self.real_A_encoded, self.fake_B_random], 1)
-            self.real_data_random = torch.cat([self.real_A[half_size:], self.real_B_random], 1)
+            self.real_data_random = torch.cat([self.real_A[half_size:], self.real_B_random], 1)  # 任取A,B
         else:
             self.fake_data_encoded = self.fake_B_encoded
             self.fake_data_random = self.fake_B_random
             self.real_data_encoded = self.real_B_encoded
             self.real_data_random = self.real_B_random
 
-        # compute z_predict
+        # # compute z_predict # cLR-GAN中
         # if self.opt.lambda_z > 0.0:
         #     self.mu2, logvar2 = self.netE(self.fake_B_random)  # mu2 is a point estimate
 
@@ -157,12 +159,12 @@ class BiCycleGANModel(BaseModel):
     def backward_EG(self):
         # 1, G(A) should fool D
         self.loss_G_GAN = self.backward_G_GAN(self.fake_data_encoded, self.netD, self.opt.lambda_GAN)
-        #
-        if self.opt.use_same_D:
-            self.loss_G_GAN2 = self.backward_G_GAN(self.fake_data_random, self.netD, self.opt.lambda_GAN2)
-        else:
-            self.loss_G_GAN2 = self.backward_G_GAN(self.fake_data_random, self.netD2, self.opt.lambda_GAN2)
-        #
+        # #
+        # if self.opt.use_same_D:
+        #     self.loss_G_GAN2 = self.backward_G_GAN(self.fake_data_random, self.netD, self.opt.lambda_GAN2)
+        # else:
+        #     self.loss_G_GAN2 = self.backward_G_GAN(self.fake_data_random, self.netD2, self.opt.lambda_GAN2)
+        # #
         # 2. KL loss
         if self.opt.lambda_kl > 0.0:
             kl_element = self.mu.pow(2).add_(self.logvar.exp()).mul_(-1).add_(1).add_(self.logvar)
@@ -175,7 +177,8 @@ class BiCycleGANModel(BaseModel):
         else:
             self.loss_G_L1 = 0.0
 
-        self.loss_G = self.loss_G_GAN + self.loss_G_GAN2 + self.loss_G_L1 + self.loss_kl
+        # self.loss_G = self.loss_G_GAN + self.loss_G_GAN2 + self.loss_G_L1 + self.loss_kl
+        self.loss_G = self.loss_G_GAN + self.loss_G_L1 + self.loss_kl
         self.loss_G.backward(retain_graph=True)
 
     def update_D(self):
@@ -183,23 +186,25 @@ class BiCycleGANModel(BaseModel):
         # update D1
         if self.opt.lambda_GAN > 0.0:
             self.optimizer_D.zero_grad()
-            self.loss_D, self.losses_D = self.backward_D(self.netD, self.real_data_encoded, self.fake_data_encoded)
-            if self.opt.use_same_D:
-                self.loss_D2, self.losses_D2 = self.backward_D(self.netD, self.real_data_random, self.fake_data_random)
+            self.loss_D, self.losses_D = self.backward_D(self.netD, self.real_data_encoded,
+                                                         self.fake_data_encoded)  # 真图，编码得到的图->fake
+            # if self.opt.use_same_D:
+            #     self.loss_D2, self.losses_D2 = self.backward_D(self.netD, self.real_data_random, self.fake_data_random)
             self.optimizer_D.step()
 
-        if self.opt.lambda_GAN2 > 0.0 and not self.opt.use_same_D:
-            self.optimizer_D2.zero_grad()
-            self.loss_D2, self.losses_D2 = self.backward_D(self.netD2, self.real_data_random, self.fake_data_random)
-            self.optimizer_D2.step()
+        # if self.opt.lambda_GAN2 > 0.0 and not self.opt.use_same_D:
+        #     self.optimizer_D2.zero_grad()
+        #     self.loss_D2, self.losses_D2 = self.backward_D(self.netD2, self.real_data_random, self.fake_data_random)
+        #     self.optimizer_D2.step()
 
-    def backward_G_alone(self):
-        # 3, reconstruction |(E(G(A, z_random)))-z_random|
-        if self.opt.lambda_z > 0.0:
-            self.loss_z_L1 = torch.mean(torch.abs(self.mu2 - self.z_random)) * self.opt.lambda_z
-            self.loss_z_L1.backward()
-        else:
-            self.loss_z_L1 = 0.0
+    # cLR-GAN
+    # def backward_G_alone(self):
+    #     # 3, reconstruction |(E(G(A, z_random)))-z_random|
+    #     if self.opt.lambda_z > 0.0:
+    #         self.loss_z_L1 = torch.mean(torch.abs(self.mu2 - self.z_random)) * self.opt.lambda_z
+    #         self.loss_z_L1.backward()
+    #     else:
+    #         self.loss_z_L1 = 0.0
 
     def update_G_and_E(self):
         # update G and E
@@ -214,7 +219,7 @@ class BiCycleGANModel(BaseModel):
         if self.opt.lambda_z > 0.0:
             self.optimizer_G.zero_grad()
             self.optimizer_E.zero_grad()
-            self.backward_G_alone()
+            # self.backward_G_alone()
             self.optimizer_G.step()
         #
 
