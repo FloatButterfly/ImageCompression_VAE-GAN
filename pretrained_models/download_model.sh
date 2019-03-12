@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 FILE=$1
 
 echo "Note: available models are edges2shoes, edges2handbags, night2day, maps, and facades"
