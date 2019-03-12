@@ -70,7 +70,12 @@ python ./train.py --display_id 10 --dataroot ./datasets/edges2handbags --name ed
 python ./train.py --display_id 10 --dataroot ./datasets/edges2handbags --model zvae_gan --direction AtoB --checkpoints_dir ../checkpoints/edges2handbagsWithNZ8/ \
 --name edges2twoDatasets_zvae --loadSize 256 --fineSize 256 --nz 8 --input_nc 1 --niter 20 --niter_decay 20 --use_dropout --phase train_together --epoch 120
 
-#labeled
+#labeled generator
 python ./train.py --dataset_mode labeled --display_id 10 --dataroot ./datasets/together --model label_zvae --direction AtoB \
 --checkpoints_dir ../checkpoints/together_labeled --name edge2shoes_and_handbags --loadSize 256 --fineSize 256 --nz 8 --input_nc 1 \
 --niter 60 --niter_decay 60 --use_dropout --phase train --batch_size 4 --continue_train
+
+#labeled encoder
+python ./train.py --dataset_mode labeled --display_id 10 --dataroot ./datasets/together --model label_encoder_zvae --direction AtoB \
+--checkpoints_dir ../checkpoints/together_labeled --name edge2shoes_and_handbags --loadSize 256 --fineSize 256 --nz 8 --input_nc 1 \
+--niter 20 --niter_decay 20 --use_dropout --phase val
