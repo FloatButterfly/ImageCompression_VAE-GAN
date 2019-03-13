@@ -6,9 +6,9 @@ from . import networks
 from .base_model import BaseModel
 
 
-class labelZvaeModel(BaseModel):
+class labelBothZvaeModel(BaseModel):
     def name(self):
-        return 'labelZvaeModel'
+        return 'labelBothZvaeModel'
 
     @staticmethod
     def modify_commandline_options(parser, is_train=True):
@@ -17,7 +17,7 @@ class labelZvaeModel(BaseModel):
     """
     --A: sketch
     --B: ground truth
-    
+
     """
 
     def initialize(self, opt):
@@ -50,7 +50,7 @@ class labelZvaeModel(BaseModel):
 
         if use_E:
             self.model_names += ['E']
-            self.netE = networks.define_E(opt.output_nc, opt.nz, opt.nef, netE=opt.netE, norm=opt.norm, nl=opt.nl,
+            self.netE = networks.define_E(opt.output_nc+1, opt.nz, opt.nef, netE=opt.netE, norm=opt.norm, nl=opt.nl,
                                           init_type=opt.init_type, gpu_ids=self.gpu_ids, vaeLike=use_vae)
 
         if opt.isTrain:
@@ -100,11 +100,17 @@ class labelZvaeModel(BaseModel):
         return z.to(self.device)
 
     def encode(self, input_image):
-        mu, logvar = self.netE.forward(input_image)
+        label = self.label.view(self.label.size(0), self.label.size(1), 1, 1).expand(
+            self.label.size(0), self.label.size(1), input_image.size(2), input_image.size(3))
+        print("label:", label)
+        image_and_z = torch.cat([label, input_image], dim=1)
+        print("image_and_z shape: ", image_and_z.shape)
+        mu, logvar = self.netE.forward(image_and_z)
         std = logvar.mul(0.5).exp_()
         eps = self.get_z_random(std.size(0), std.size(1))
         z = eps.mul(std).add_(mu)
         return z, mu, logvar
+
 
     def z_encode(self):
         z, logvar = self.netE(self.real_B)
@@ -114,10 +120,7 @@ class labelZvaeModel(BaseModel):
     def test(self, z0=None, encode=False):
         with torch.no_grad():
             if encode:  # use encoded z
-                z0, logvar = self.netE(self.real_B)  # 直接使用均值，不经过随机采样
-                # std = logvar.mul(0.5).exp_()
-                # eps = self.get_z_random(std.size(0), std.size(1))
-                # z0 = eps.mul(std).add_(mu)
+                z0, mu, logvar = self.encode(self.real_B)
                 self.z_encoded = z0
                 self.logvar = logvar
             if z0 is None:
@@ -133,9 +136,13 @@ class labelZvaeModel(BaseModel):
         total_size = self.opt.batch_size
         self.real_A_encoded = self.real_A[0:total_size]
         self.real_B_encoded = self.real_B[0:total_size]
+        print(self.label, self.label.shape)
         # get encoded z
         self.z_encoded, self.mu, self.logvar = self.encode(self.real_B_encoded)
         self.z_encoded_label = torch.cat([self.z_encoded, self.label], dim=1)
+        # print(self.z_encoded_label, self.z_encoded_label.shape)
+        # get random z
+        # self.z_random = self.get_z_random(self.real_A_encoded.size(0), self.opt.nz)
         # generate fake_B_encoded
         self.fake_B_encoded = self.netG(self.real_A_encoded, self.z_encoded_label)
 
@@ -150,7 +157,10 @@ class labelZvaeModel(BaseModel):
 
         # compute z_predict with fake_B_encoded
         if self.opt.lambda_z > 0.0:
-            self.mu2, logvar2 = self.netE(self.fake_B_encoded)
+            label = self.label.view(self.label.size(0), self.label.size(1), 1, 1).expand(
+                self.label.size(0), self.label.size(1), self.fake_B_encoded.size(2), self.fake_B_encoded.size(3))
+            image_and_z = torch.cat([label, self.fake_B_encoded], dim=1)
+            self.mu2, logvar2 = self.netE(image_and_z)
         # if self.opt.lambda_z > 0.0:
         #     self.mu2, logvar2 = self.netE(self.fake_B_random)  # mu2 is a point estimate
 

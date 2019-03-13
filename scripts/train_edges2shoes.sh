@@ -73,9 +73,9 @@ python ./train.py --display_id 10 --dataroot ./datasets/edges2handbags --model z
 #labeled generator
 python ./train.py --dataset_mode labeled --display_id 10 --dataroot ./datasets/together --model label_zvae --direction AtoB \
 --checkpoints_dir ../checkpoints/together_labeled --name edge2shoes_and_handbags --loadSize 256 --fineSize 256 --nz 8 --input_nc 1 \
---niter 60 --niter_decay 60 --use_dropout --phase train --batch_size 4 --continue_train
+--niter 60 --niter_decay 60 --use_dropout --phase train --batch_size 4
 
 #labeled encoder
 python ./train.py --dataset_mode labeled --display_id 10 --dataroot ./datasets/together --model label_encoder_zvae --direction AtoB \
---checkpoints_dir ../checkpoints/together_labeled --name edge2shoes_and_handbags --loadSize 256 --fineSize 256 --nz 8 --input_nc 1 \
---niter 20 --niter_decay 20 --use_dropout --phase val
+--checkpoints_dir ../checkpoints/together_labeled_encoder --name edge2shoes_and_handbags --loadSize 256 --fineSize 256 --nz 8 --input_nc 1 \
+--niter 60 --niter_decay 60 --use_dropout --phase train --batch_size 4

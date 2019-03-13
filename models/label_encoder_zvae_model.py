@@ -99,10 +99,9 @@ class labelEncoderZvaeModel(BaseModel):
         return z.to(self.device)
 
     def encode(self, input_image):
-        self.label = self.label_org.view(self.label_org.size(0), self.label_org.size(1), 1, 1).expand(
-            self.label_org.size(0), self.label_org.size(1), input_image.size(2), input_image.size(3))
-        print("label:", self.label)
-        image_and_z = torch.cat([self.label, input_image], dim=1)
+        label = self.label.view(self.label.size(0), self.label.size(1), 1, 1).expand(
+            self.label.size(0), self.label.size(1), input_image.size(2), input_image.size(3))
+        image_and_z = torch.cat([label, input_image], dim=1)
         print("image_and_z shape: ", image_and_z.shape)
         mu, logvar = self.netE.forward(image_and_z)
         std = logvar.mul(0.5).exp_()
@@ -137,8 +136,6 @@ class labelEncoderZvaeModel(BaseModel):
         self.real_A_encoded = self.real_A[0:total_size]
         self.real_B_encoded = self.real_B[0:total_size]
         print(self.label, self.label.shape)
-        self.label_org = self.label
-        # self.label_org = torch.unsqueeze(self.label, -1)
         # get encoded z
         self.z_encoded, self.mu, self.logvar = self.encode(self.real_B_encoded)
         # generate fake_B_encoded
@@ -155,7 +152,10 @@ class labelEncoderZvaeModel(BaseModel):
 
         # compute z_predict with fake_B_encoded
         if self.opt.lambda_z > 0.0:
-            self.z_fake_encoded, _, _ = self.encode(self.fake_B_encoded)
+            label = self.label.view(self.label.size(0), self.label.size(1), 1, 1).expand(
+                self.label.size(0), self.label.size(1), self.fake_B_encoded.size(2), self.fake_B_encoded.size(3))
+            image_and_z = torch.cat([label, self.fake_B_encoded], dim=1)
+            self.mu2, logvar2 = self.netE(image_and_z)
         # if self.opt.lambda_z > 0.0:
         #     self.mu2, logvar2 = self.netE(self.fake_B_random)  # mu2 is a point estimate
 
@@ -191,7 +191,7 @@ class labelEncoderZvaeModel(BaseModel):
 
     def backward_EG(self):
         # 1, G(A) should fool D
-        self.loss_G_GAN = self.backward_G_GAN(self.fake_data_encoded, self.label_org, self.netD, self.opt.lambda_GAN)
+        self.loss_G_GAN = self.backward_G_GAN(self.fake_data_encoded, self.label, self.netD, self.opt.lambda_GAN)
         #
         # 2. KL loss
         if self.opt.lambda_kl > 0.0:
@@ -214,13 +214,13 @@ class labelEncoderZvaeModel(BaseModel):
         if self.opt.lambda_GAN > 0.0:
             self.optimizer_D.zero_grad()
             self.loss_D, self.losses_D = self.backward_D(self.netD, self.real_data_encoded, self.fake_data_encoded,
-                                                         self.label_org)
+                                                         self.label)
             self.optimizer_D.step()
 
     def backward_G_alone(self):
         # 3, reconstruction |(E(G(A, z_random)))-z_random|
         if self.opt.lambda_z > 0.0:
-            self.loss_z_L1 = torch.mean(torch.abs(self.z_fake_encoded - self.z_encoded)) * self.opt.lambda_z
+            self.loss_z_L1 = torch.mean(torch.abs(self.mu2 - self.mu)) * self.opt.lambda_z
             self.loss_z_L1.backward()
         else:
             self.loss_z_L1 = 0.0

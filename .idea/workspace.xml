@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="51b9f8fb-bb6f-41cb-b207-3becfffee36d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/models/label_encoder_zvae_model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/label_both_zvae_model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/label_encoder_zvae_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/label_encoder_zvae_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/label_zvae_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/label_zvae_model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts/train_edges2shoes.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/train_edges2shoes.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -193,7 +194,7 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="md" value="1" />
-          <entry key="py" value="62" />
+          <entry key="py" value="66" />
           <entry key="sh" value="6" />
           <entry key="url" value="1" />
         </counts>
@@ -203,7 +204,7 @@
           <entry key="Bash" value="6" />
           <entry key="Markdown" value="1" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="62" />
+          <entry key="Python" value="66" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -211,17 +212,17 @@
           <entry key="Python Console" value="47" />
           <entry key="dummy" value="7" />
           <entry key="moveFile (1)" value="138" />
-          <entry key="py" value="4083" />
-          <entry key="sh" value="610" />
+          <entry key="py" value="4168" />
+          <entry key="sh" value="646" />
           <entry key="train" value="1344" />
           <entry key="txt" value="40" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Bash" value="610" />
+          <entry key="Bash" value="646" />
           <entry key="PLAIN_TEXT" value="47" />
-          <entry key="Python" value="5612" />
+          <entry key="Python" value="5697" />
         </counts>
       </usages-collector>
     </session>
@@ -231,19 +232,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models/label_zvae_model.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1113">
-              <caret line="82" lean-forward="true" selection-end-line="249" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-                <marker date="1552353281715" expanded="true" signature="7142:7249" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data/labeled_dataset.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -257,31 +245,68 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/scripts/test_edges2shoes.sh">
+        <entry file="file://$PROJECT_DIR$/scripts/train_edges2shoes.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="341">
-              <caret line="92" selection-start-line="92" selection-end-line="93" selection-end-column="123" />
+            <state relative-caret-position="569">
+              <caret line="80" column="39" lean-forward="true" selection-start-line="80" selection-start-column="39" selection-end-line="80" selection-end-column="39" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/models/base_model.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/models/label_both_zvae_model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="392">
-              <caret line="19" column="49" selection-start-line="19" selection-start-column="49" selection-end-line="19" selection-end-column="49" />
+            <state relative-caret-position="4238">
+              <caret line="242" column="35" lean-forward="true" selection-start-line="242" selection-start-column="35" selection-end-line="242" selection-end-column="35" />
               <folding>
-                <element signature="e#0#9#0" expanded="true" />
+                <element signature="e#0#18#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/scripts/train_edges2shoes.sh">
+        <entry file="file://$PROJECT_DIR$/models/zvae_gan_model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="522">
-              <caret line="80" column="53" lean-forward="true" selection-start-line="80" selection-start-column="53" selection-end-line="80" selection-end-column="53" />
+            <state relative-caret-position="-1957">
+              <caret line="117" column="75" selection-start-line="117" selection-start-column="66" selection-end-line="117" selection-end-column="75" />
+              <folding>
+                <element signature="e#0#12#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models/bicycle_gan_model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="489">
+              <caret line="92" column="36" lean-forward="true" selection-start-line="92" selection-start-column="36" selection-end-line="92" selection-end-column="36" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models/label_encoder_zvae_model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="28">
+              <caret line="159" column="26" selection-start-line="159" selection-start-column="26" selection-end-line="159" selection-end-column="26" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/models/label_zvae_model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="4452">
+              <caret line="159" lean-forward="true" selection-start-line="159" selection-end-line="159" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
+                <marker date="1552443634999" expanded="true" signature="6838:6945" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -291,18 +316,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="896">
               <caret line="39" column="16" lean-forward="true" selection-start-line="39" selection-start-column="16" selection-end-line="39" selection-end-column="16" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/models/label_encoder_zvae_model.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="383">
-              <caret line="46" column="34" selection-start-line="46" selection-start-column="34" selection-end-line="46" selection-end-column="34" />
-              <folding>
-                <element signature="e#0#18#0" expanded="true" />
-              </folding>
             </state>
           </provider>
         </entry>
@@ -343,11 +356,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>na</find>
-      <find>epoch</find>
-      <find>lr</find>
-      <find>epo</find>
-      <find>conv3x3</find>
       <find>norm_layer</find>
       <find>net</find>
       <find>real_label</find>
@@ -371,8 +379,13 @@
       <find>DD</find>
       <find>encoder</find>
       <find>define_E</find>
-      <find>print</find>
       <find>mu2</find>
+      <find>print</find>
+      <find>encode</find>
+      <find>z_encoded</find>
+      <find>self.mu</find>
+      <find>netE</find>
+      <find>label_org</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -390,7 +403,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/pytorch_msssim/__init__.py" />
         <option value="$PROJECT_DIR$/models/base_model.py" />
         <option value="$PROJECT_DIR$/msssim.py" />
         <option value="$PROJECT_DIR$/results/edges2shoes/zvae-nz8/epoch120/val/images/mssim.py" />
@@ -435,12 +447,13 @@
         <option value="$PROJECT_DIR$/test_variable.py" />
         <option value="$PROJECT_DIR$/venv/test_latent.py" />
         <option value="$PROJECT_DIR$/models/zvae_gan_model.py" />
-        <option value="$PROJECT_DIR$/models/label_zvae_model.py" />
         <option value="$PROJECT_DIR$/test_latent.py" />
         <option value="$PROJECT_DIR$/scripts/test_edges2shoes.sh" />
         <option value="$PROJECT_DIR$/models/networks.py" />
         <option value="$PROJECT_DIR$/scripts/train_edges2shoes.sh" />
+        <option value="$PROJECT_DIR$/models/label_both_zvae_model.py" />
         <option value="$PROJECT_DIR$/models/label_encoder_zvae_model.py" />
+        <option value="$PROJECT_DIR$/models/label_zvae_model.py" />
       </list>
     </option>
   </component>
@@ -452,7 +465,7 @@
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-8" />
-    <option name="width" value="875" />
+    <option name="width" value="1378" />
     <option name="height" value="1110" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -655,7 +668,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/train.py" />
-      <option name="PARAMETERS" value="--dataset_mode labeled --display_id 10 --dataroot ./datasets/together --model label_encoder_zvae --direction AtoB --checkpoints_dir ../checkpoints/together_labeled --name edge2shoes_and_handbags --loadSize 256 --fineSize 256 --nz 8 --input_nc 1 --niter 20 --niter_decay 20 --use_dropout --phase val" />
+      <option name="PARAMETERS" value="--dataset_mode labeled --display_id 10 --dataroot ./datasets/together --model label_both_zvae --direction AtoB --checkpoints_dir ../checkpoints/together_labeled --name edge2shoes_and_handbags --loadSize 256 --fineSize 256 --nz 8 --input_nc 1 --niter 20 --niter_decay 20 --use_dropout --phase val" />
       <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -723,13 +736,12 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1653" height="896" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8707865" visible="true" weight="0.16050157" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8707865" visible="true" weight="0.18557994" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" sideWeight="0.12921348" side_tool="true" weight="0.08579089" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.5347313" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.12712975" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.70067114" weight="0.40141845" />
       <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49966422" weight="0.22280473" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -740,36 +752,36 @@
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.6394984" side_tool="true" weight="0.52555704" />
       <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.49932885" weight="0.32765958" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="12" sideWeight="0.36050156" visible="true" weight="0.15727392" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="12" sideWeight="0.36050156" visible="true" weight="0.6408912" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="SciView" order="3" sideWeight="0.48724833" weight="0.038922157" />
-      <window_info anchor="right" x="0" y="0" width="337" height="638" id="Documentation" order="4" sideWeight="0.5127517" side_tool="true" visible="true" weight="0.005015674" />
+      <window_info anchor="right" x="0" y="0" width="337" height="638" id="Documentation" order="4" sideWeight="0.5127517" side_tool="true" weight="0.005015674" />
       <window_info anchor="right" id="Database" order="5" weight="0.3297587" />
     </layout>
     <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8707865" visible="true" weight="0.093812376" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8707865" visible="true" weight="0.18557994" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" sideWeight="0.12921348" side_tool="true" weight="0.08579089" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.0070921984" />
+      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.12712975" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.70067114" weight="0.40141845" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49966422" weight="0.4672709" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49966422" weight="0.22280473" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.116621986" side_tool="true" weight="0.2141844" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.6394984" side_tool="true" weight="0.52555704" />
       <window_info anchor="bottom" id="Terminal" order="11" sideWeight="0.49932885" weight="0.32765958" />
-      <window_info active="true" anchor="bottom" id="Python Console" order="12" sideWeight="0.883378" visible="true" weight="0.24974824" />
+      <window_info anchor="bottom" id="Python Console" order="12" sideWeight="0.36050156" weight="0.16251639" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="SciView" order="3" sideWeight="0.48724833" visible="true" weight="0.038922157" />
-      <window_info anchor="right" x="0" y="0" width="337" height="638" id="Documentation" order="4" sideWeight="0.5127517" side_tool="true" visible="true" weight="0.038922157" />
+      <window_info anchor="right" id="SciView" order="3" sideWeight="0.48724833" weight="0.038922157" />
+      <window_info anchor="right" x="0" y="0" width="337" height="638" id="Documentation" order="4" sideWeight="0.5127517" side_tool="true" visible="true" weight="0.005015674" />
       <window_info anchor="right" id="Database" order="5" weight="0.3297587" />
     </layout-to-restore>
   </component>
@@ -787,21 +799,7 @@
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/models/zvae_gan_model.py</url>
-          <line>50</line>
-          <option name="timeStamp" value="13" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/tensor_log.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="891">
@@ -956,13 +954,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/bicycle_gan_model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2408">
-          <caret line="88" selection-start-line="88" selection-end-line="88" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/data/base_data_loader.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1070,37 +1061,6 @@
     <entry file="file://$USER_HOME$/Anaconda3/Lib/site-packages/torchvision/transforms/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/models/label_zvae_model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1113">
-          <caret line="82" lean-forward="true" selection-end-line="249" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-            <marker date="1552353281715" expanded="true" signature="7142:7249" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/models/zvae_gan_model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="84">
-          <caret line="51" selection-start-line="51" selection-end-line="51" />
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test_latent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="331">
-          <caret line="55" column="17" selection-start-line="55" selection-start-column="17" selection-end-line="55" selection-end-column="17" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/base_model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="392">
@@ -1118,26 +1078,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/scripts/train_edges2shoes.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="522">
-          <caret line="80" column="53" lean-forward="true" selection-start-line="80" selection-start-column="53" selection-end-line="80" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/options/base_options.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="896">
-          <caret line="39" column="16" lean-forward="true" selection-start-line="39" selection-start-column="16" selection-end-line="39" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models/networks.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1502">
           <caret line="809" column="12" selection-start-line="809" selection-start-column="12" selection-end-line="809" selection-end-column="12" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/test_latent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="331">
+          <caret line="55" column="17" selection-start-line="55" selection-start-column="17" selection-end-line="55" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1152,10 +1108,62 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/options/base_options.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="896">
+          <caret line="39" column="16" lean-forward="true" selection-start-line="39" selection-start-column="16" selection-end-line="39" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/zvae_gan_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1957">
+          <caret line="117" column="75" selection-start-line="117" selection-start-column="66" selection-end-line="117" selection-end-column="75" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/bicycle_gan_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="489">
+          <caret line="92" column="36" lean-forward="true" selection-start-line="92" selection-start-column="36" selection-end-line="92" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/models/label_encoder_zvae_model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="383">
-          <caret line="46" column="34" selection-start-line="46" selection-start-column="34" selection-end-line="46" selection-end-column="34" />
+        <state relative-caret-position="28">
+          <caret line="159" column="26" selection-start-line="159" selection-start-column="26" selection-end-line="159" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/scripts/train_edges2shoes.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="569">
+          <caret line="80" column="39" lean-forward="true" selection-start-line="80" selection-start-column="39" selection-end-line="80" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/label_zvae_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4452">
+          <caret line="159" lean-forward="true" selection-start-line="159" selection-end-line="159" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <marker date="1552443634999" expanded="true" signature="6838:6945" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/models/label_both_zvae_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4238">
+          <caret line="242" column="35" lean-forward="true" selection-start-line="242" selection-start-column="35" selection-end-line="242" selection-end-column="35" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
           </folding>
